@@ -1,0 +1,408 @@
+[
+    {
+        "comment": "test against implementation-specific numeric parsing",
+        "doc": {
+            "1e0": "foo"
+        },
+        "expected": {
+            "1e0": "foo"
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/1e0",
+                "value": "foo"
+            }
+        ]
+    },
+    {
+        "comment": "test with bad number should fail",
+        "doc": [
+            "foo",
+            "bar"
+        ],
+        "error": "test op shouldn't get array element 1",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/1e0",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "spurious patch properties",
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "spurious": 1,
+                "value": 1
+            }
+        ]
+    },
+    {
+        "comment": "null value should be valid obj property",
+        "doc": {
+            "foo": null
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": null
+            }
+        ]
+    },
+    {
+        "comment": "test should pass despite rearrangement",
+        "doc": {
+            "foo": {
+                "bar": 2,
+                "foo": 1
+            }
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": {
+                    "bar": 2,
+                    "foo": 1
+                }
+            }
+        ]
+    },
+    {
+        "comment": "test should pass despite (nested) rearrangement",
+        "doc": {
+            "foo": [
+                {
+                    "bar": 2,
+                    "foo": 1
+                }
+            ]
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": [
+                    {
+                        "bar": 2,
+                        "foo": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "comment": "test should pass - no error",
+        "doc": {
+            "foo": {
+                "bar": [
+                    1,
+                    2,
+                    5,
+                    4
+                ]
+            }
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": {
+                    "bar": [
+                        1,
+                        2,
+                        5,
+                        4
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "doc": {
+            "foo": {
+                "bar": [
+                    1,
+                    2,
+                    5,
+                    4
+                ]
+            }
+        },
+        "error": "test op should fail",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    {
+        "comment": "Whole document",
+        "disabled": true,
+        "doc": {
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "",
+                "value": {
+                    "foo": 1
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Empty-string element",
+        "doc": {
+            "": 1
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "doc": {
+            "": 0,
+            " ": 7,
+            "a/b": 1,
+            "c%d": 2,
+            "e^f": 3,
+            "foo": [
+                "bar",
+                "baz"
+            ],
+            "g|h": 4,
+            "i\\j": 5,
+            "k\"l": 6,
+            "m~n": 8
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": [
+                    "bar",
+                    "baz"
+                ]
+            },
+            {
+                "op": "test",
+                "path": "/foo/0",
+                "value": "bar"
+            },
+            {
+                "op": "test",
+                "path": "/",
+                "value": 0
+            },
+            {
+                "op": "test",
+                "path": "/a~1b",
+                "value": 1
+            },
+            {
+                "op": "test",
+                "path": "/c%d",
+                "value": 2
+            },
+            {
+                "op": "test",
+                "path": "/e^f",
+                "value": 3
+            },
+            {
+                "op": "test",
+                "path": "/g|h",
+                "value": 4
+            },
+            {
+                "op": "test",
+                "path": "/i\\j",
+                "value": 5
+            },
+            {
+                "op": "test",
+                "path": "/k\"l",
+                "value": 6
+            },
+            {
+                "op": "test",
+                "path": "/ ",
+                "value": 7
+            },
+            {
+                "op": "test",
+                "path": "/m~0n",
+                "value": 8
+            }
+        ]
+    },
+    {
+        "comment": "missing 'value' parameter to test",
+        "doc": [
+            null
+        ],
+        "error": "missing 'value' parameter",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/0"
+            }
+        ]
+    },
+    {
+        "comment": "missing value parameter to test - where undef is falsy",
+        "doc": [
+            false
+        ],
+        "error": "missing 'value' parameter",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/0"
+            }
+        ]
+    },
+    {
+        "comment": "test with bad array number that has leading zeros",
+        "doc": [
+            "foo",
+            "bar"
+        ],
+        "error": "test op should reject the array value, it has leading zeros",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/00",
+                "value": "foo"
+            }
+        ]
+    },
+    {
+        "comment": "test with bad array number that has leading zeros",
+        "doc": [
+            "foo",
+            "bar"
+        ],
+        "error": "test op should reject the array value, it has leading zeros",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/01",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "A.8.  Testing a Value: Success",
+        "doc": {
+            "baz": "qux",
+            "foo": [
+                "a",
+                2,
+                "c"
+            ]
+        },
+        "expected": {
+            "baz": "qux",
+            "foo": [
+                "a",
+                2,
+                "c"
+            ]
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/baz",
+                "value": "qux"
+            },
+            {
+                "op": "test",
+                "path": "/foo/1",
+                "value": 2
+            }
+        ]
+    },
+    {
+        "comment": "A.9.  Testing a Value: Error",
+        "doc": {
+            "baz": "qux"
+        },
+        "error": "string not equivalent",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/baz",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "A.14. ~ Escape Ordering",
+        "doc": {
+            "/": 9,
+            "~1": 10
+        },
+        "expected": {
+            "/": 9,
+            "~1": 10
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/~01",
+                "value": 10
+            }
+        ]
+    },
+    {
+        "comment": "A.15. Comparing Strings and Numbers",
+        "doc": {
+            "/": 9,
+            "~1": 10
+        },
+        "error": "number is not equal to string",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/~01",
+                "value": "10"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "foo": 9.3,
+            "bar": 10
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/foo",
+                "value": 9.3
+            }
+        ]
+    }
+]

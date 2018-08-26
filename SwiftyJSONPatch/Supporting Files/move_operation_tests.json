@@ -1,0 +1,186 @@
+[
+    {
+        "comment": "A.6.  Moving a Value",
+        "doc": {
+            "foo": {
+                "bar": "baz",
+                "waldo": "fred"
+            },
+            "qux": {
+                "corge": "grault"
+            }
+        },
+        "expected": {
+            "foo": {
+                "bar": "baz"
+            },
+            "qux": {
+                "corge": "grault",
+                "thud": "fred"
+            }
+        },
+        "patch": [
+            {
+                "from": "/foo/waldo",
+                "op": "move",
+                "path": "/qux/thud"
+            }
+        ]
+    },
+    {
+        "comment": "A.7.  Moving an Array Element",
+        "doc": {
+            "foo": [
+                "all",
+                "grass",
+                "cows",
+                "eat"
+            ]
+        },
+        "expected": {
+            "foo": [
+                "all",
+                "cows",
+                "eat",
+                "grass"
+            ]
+        },
+        "patch": [
+            {
+                "from": "/foo/1",
+                "op": "move",
+                "path": "/foo/3"
+            }
+        ]
+    },
+    {
+        "comment": "null value should be valid obj property to be moved",
+        "doc": {
+            "foo": null
+        },
+        "expected": {
+            "bar": null
+        },
+        "patch": [
+            {
+                "from": "/foo",
+                "op": "move",
+                "path": "/bar"
+            }
+        ]
+    },
+    {
+        "comment": "Move to same location has no effect",
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "foo": 1
+        },
+        "patch": [
+            {
+                "from": "/foo",
+                "op": "move",
+                "path": "/foo"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "baz": [
+                {
+                    "qux": "hello"
+                }
+            ],
+            "foo": 1
+        },
+        "expected": {
+            "bar": 1,
+            "baz": [
+                {
+                    "qux": "hello"
+                }
+            ]
+        },
+        "patch": [
+            {
+                "from": "/foo",
+                "op": "move",
+                "path": "/bar"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "bar": 1,
+            "baz": [
+                {
+                    "qux": "hello"
+                }
+            ]
+        },
+        "expected": {
+            "bar": 1,
+            "baz": [
+                {},
+                "hello"
+            ]
+        },
+        "patch": [
+            {
+                "from": "/baz/0/qux",
+                "op": "move",
+                "path": "/baz/1"
+            }
+        ]
+    },
+    {
+        "comment": "test move with bad number should fail",
+        "doc": {
+            "baz": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "foo": 1
+        },
+        "error": "move op shouldn't work with bad number",
+        "patch": [
+            {
+                "from": "/baz/1e0",
+                "op": "move",
+                "path": "/foo"
+            }
+        ]
+    },
+    {
+        "comment": "missing from parameter to move",
+        "doc": {
+            "foo": 1
+        },
+        "error": "missing 'from' parameter",
+        "patch": [
+            {
+                "op": "move",
+                "path": ""
+            }
+        ]
+    },
+    {
+        "comment": "duplicate ops",
+        "disabled": true,
+        "doc": {
+            "foo": "bar"
+        },
+        "error": "patch has two 'op' members",
+        "patch": [
+            {
+                "from": "/foo",
+                "op": "move",
+                "path": "/baz",
+                "value": "qux"
+            }
+        ]
+    }
+]

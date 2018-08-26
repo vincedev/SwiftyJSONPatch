@@ -1,0 +1,264 @@
+[
+    {
+        "comment": "Replace operation on first element of root array",
+        "doc": [
+            "bar"
+        ],
+        "expected": [
+            "baz"
+        ],
+        "patch": [
+            {
+                "op": "replace",
+                "path": "/0",
+                "value": "baz"
+            }
+        ]
+    },
+    {
+        "comment": "Remove operation on first element of root array",
+        "doc": [
+            "bar"
+        ],
+        "expected": [],
+        "patch": [
+            {
+                "op": "remove",
+                "path": "/0"
+            }
+        ]
+    },
+    {
+        "comment": "Remove operation on complex object",
+        "doc": [
+            {
+                "bar": [
+                    {
+                        "foo": [
+                            {
+                                "baz": 1
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "expected": [
+            {
+                "bar": [
+                    {
+                        "foo": [
+                            {}
+                        ]
+                    }
+                ]
+            }
+        ],
+        "patch": [
+            {
+                "op": "remove",
+                "path": "/0/bar/0/foo/0/baz",
+                "value": "baz"
+            }
+        ]
+    },
+    {
+        "comment": "Test operation on first element of root array",
+        "doc": [
+            "bar"
+        ],
+        "expected": [
+            "bar"
+        ],
+        "patch": [
+            {
+                "op": "test",
+                "path": "/0",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "Test operation on non existent object member",
+        "doc": {
+            "foo": "bar"
+        },
+        "error": "Test operation failed: No member named \"bar\"",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/bar",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "Multi operation patch on root object",
+        "doc": {
+            "bar": "baz",
+            "baz": null,
+            "foo": 1
+        },
+        "expected": {
+            "foo": "baz",
+            "toto": [
+                1,
+                1,
+                2,
+                "baz"
+            ]
+        },
+        "patch": [
+            {
+                "op": "test",
+                "path": "/bar",
+                "value": "baz"
+            },
+            {
+                "op": "remove",
+                "path": "/baz"
+            },
+            {
+                "op": "add",
+                "path": "/toto",
+                "value": [
+                    1,
+                    2,
+                    3
+                ]
+            },
+            {
+                "op": "replace",
+                "path": "/toto/2",
+                "value": "baz"
+            },
+            {
+                "from": "/foo",
+                "op": "copy",
+                "path": "/toto/0"
+            },
+            {
+                "from": "/bar",
+                "op": "move",
+                "path": "/foo"
+            }
+        ]
+    },
+    {
+        "comment": "Test operation on document",
+        "doc": {},
+        "expected": {},
+        "patch": [
+            {
+                "op": "test",
+                "path": "",
+                "value": {}
+            }
+        ]
+    },
+    {
+        "comment": "Failing test operation on document",
+        "doc": [
+            1
+        ],
+        "error": "Test operation failed: No value \"baz\" at path \"/0\"",
+        "patch": [
+            {
+                "op": "test",
+                "path": "/0",
+                "value": "baz"
+            }
+        ]
+    },
+    {
+        "comment": "Failing test operation on document (invalid pointer string)",
+        "doc": [
+            1
+        ],
+        "error": "Test operation failed: No value \"baz\" at path \"/0\"",
+        "patch": [
+            {
+                "op": "test",
+                "path": "baz",
+                "value": "baz"
+            }
+        ]
+    },
+    {
+        "comment": "Failing test operation on document",
+        "doc": [],
+        "error": "Test operation failed: No value \"{}\" at path \"\"",
+        "patch": [
+            {
+                "op": "test",
+                "path": "",
+                "value": "{}"
+            }
+        ]
+    },
+    {
+        "comment": "Failing move operation on document",
+        "doc": {
+            "foo": {
+                "bar": {
+                    "baz": "toto"
+                }
+            }
+        },
+        "error": "Move operation failed: Destination (\"/foo/bar/baz\") is a subpath of source (\"/foo/bar\")",
+        "patch": [
+            {
+                "from": "/foo/bar",
+                "op": "move",
+                "path": "/foo/bar/baz"
+            }
+        ]
+    },
+    {
+        "comment": "Failing move operation on document",
+        "doc": {
+            "foo": {
+                "bar": {
+                    "baz": "toto"
+                }
+            }
+        },
+        "error": "Move operation failed: From pointer (\"/foo/baz\") not found",
+        "patch": [
+            {
+                "from": "/foo/baz",
+                "op": "move",
+                "path": "/foo/bar"
+            }
+        ]
+    },
+    {
+        "comment": "Failing test operation on document",
+        "doc": [
+            1.234,
+            1,
+            1,
+            1,
+            1
+        ],
+        "error": "Add operation failed: Index 10 is out of bounds",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/10",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "doc": [],
+        "error": "Illegal operation",
+        "patch": [
+            {
+                "op": "toto",
+                "path": "/",
+                "value": 1
+            }
+        ]
+    }
+]

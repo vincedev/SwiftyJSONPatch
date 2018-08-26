@@ -1,0 +1,704 @@
+[
+    {
+        "comment": "add replaces any existing field",
+        "doc": {
+            "foo": null
+        },
+        "expected": {
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/foo",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "comment": "toplevel array",
+        "doc": [],
+        "expected": [
+            "foo"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/0",
+                "value": "foo"
+            }
+        ]
+    },
+    {
+        "comment": "toplevel object, numeric string",
+        "doc": {},
+        "expected": {
+            "foo": "1"
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/foo",
+                "value": "1"
+            }
+        ]
+    },
+    {
+        "comment": "toplevel object, integer",
+        "doc": {},
+        "expected": {
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/foo",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "comment": "replace object document with array document?",
+        "doc": {},
+        "expected": [],
+        "patch": [
+            {
+                "op": "add",
+                "path": "",
+                "value": []
+            }
+        ]
+    },
+    {
+        "comment": "replace array document with object document?",
+        "doc": [],
+        "expected": {},
+        "patch": [
+            {
+                "op": "add",
+                "path": "",
+                "value": {}
+            }
+        ]
+    },
+    {
+        "comment": "append to root array document?",
+        "doc": [],
+        "expected": [
+            "hi"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/-",
+                "value": "hi"
+            }
+        ]
+    },
+    {
+        "comment": "Add, / target",
+        "doc": {},
+        "expected": {
+            "": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "comment": "Add, /foo/ deep target (trailing slash)",
+        "doc": {
+            "foo": {}
+        },
+        "expected": {
+            "foo": {
+                "": 1
+            }
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/foo/",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "comment": "Add composite value at top level",
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "bar": [
+                1,
+                2
+            ],
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar",
+                "value": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    {
+        "comment": "Add into composite value",
+        "doc": {
+            "baz": [
+                {
+                    "qux": "hello"
+                }
+            ],
+            "foo": 1
+        },
+        "expected": {
+            "baz": [
+                {
+                    "foo": "world",
+                    "qux": "hello"
+                }
+            ],
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/baz/0/foo",
+                "value": "world"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "bar": [
+                1,
+                2
+            ]
+        },
+        "error": "Out of bounds (upper)",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar/8",
+                "value": "5"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "bar": [
+                1,
+                2
+            ]
+        },
+        "error": "Out of bounds (lower)",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar/-1",
+                "value": "5"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "bar": true,
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar",
+                "value": true
+            }
+        ]
+    },
+    {
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "bar": false,
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar",
+                "value": false
+            }
+        ]
+    },
+    {
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "bar": null,
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar",
+                "value": null
+            }
+        ]
+    },
+    {
+        "comment": "0 can be an array index or object element name",
+        "doc": {
+            "foo": 1
+        },
+        "expected": {
+            "0": "bar",
+            "foo": 1
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/0",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "doc": [
+            "foo"
+        ],
+        "expected": [
+            "foo",
+            "bar"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/1",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "expected": [
+            "foo",
+            "bar",
+            "sil"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/1",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "expected": [
+            "bar",
+            "foo",
+            "sil"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/0",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "push item to array via last index + 1",
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "expected": [
+            "foo",
+            "sil",
+            "bar"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/2",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "add item to array at index > length should fail",
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "error": "index is greater than number of items in array",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/3",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "error": "Object operation on array target",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/bar",
+                "value": 42
+            }
+        ]
+    },
+    {
+        "comment": "value in array add not flattened",
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "expected": [
+            "foo",
+            [
+                "bar",
+                "baz"
+            ],
+            "sil"
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/1",
+                "value": [
+                    "bar",
+                    "baz"
+                ]
+            }
+        ]
+    },
+    {
+        "comment": "replacing the root of the document is possible with add",
+        "doc": {
+            "foo": "bar"
+        },
+        "expected": {
+            "baz": "qux"
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "",
+                "value": {
+                    "baz": "qux"
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Adding to \"/-\" adds to the end of the array",
+        "doc": [
+            1,
+            2
+        ],
+        "expected": [
+            1,
+            2,
+            {
+                "foo": [
+                    "bar",
+                    "baz"
+                ]
+            }
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/-",
+                "value": {
+                    "foo": [
+                        "bar",
+                        "baz"
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Adding to \"/-\" adds to the end of the array, even n levels down",
+        "doc": [
+            1,
+            2,
+            [
+                3,
+                [
+                    4,
+                    5
+                ]
+            ]
+        ],
+        "expected": [
+            1,
+            2,
+            [
+                3,
+                [
+                    4,
+                    5,
+                    {
+                        "foo": [
+                            "bar",
+                            "baz"
+                        ]
+                    }
+                ]
+            ]
+        ],
+        "patch": [
+            {
+                "op": "add",
+                "path": "/2/1/-",
+                "value": {
+                    "foo": [
+                        "bar",
+                        "baz"
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "test add with bad number should fail",
+        "doc": [
+            "foo",
+            "sil"
+        ],
+        "error": "add op shouldn't add to array with bad number",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/1e0",
+                "value": "bar"
+            }
+        ]
+    },
+    {
+        "comment": "missing 'value' parameter to add",
+        "doc": [
+            1
+        ],
+        "error": "missing 'value' parameter",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/-"
+            }
+        ]
+    },
+    {
+        "comment": "duplicate ops",
+        "disabled": true,
+        "doc": {
+            "foo": "bar"
+        },
+        "error": "patch has two 'op' members",
+        "patch": [
+            {
+                "from": "/foo",
+                "op": "move",
+                "path": "/baz",
+                "value": "qux"
+            }
+        ]
+    },
+    {
+        "comment": "Patch with different capitalisation than doc",
+        "doc": {
+            "foo": "bar"
+        },
+        "expected": {
+            "FOO": "BAR",
+            "foo": "bar"
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/FOO",
+                "value": "BAR"
+            }
+        ]
+    },
+    {
+        "comment": "4.1. add with missing object",
+        "doc": {
+            "q": {
+                "bar": 2
+            }
+        },
+        "error": "path /a does not exist -- missing objects are not created recursively",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/a/b",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "comment": "A.1.  Adding an Object Member",
+        "doc": {
+            "foo": "bar"
+        },
+        "expected": {
+            "baz": "qux",
+            "foo": "bar"
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/baz",
+                "value": "qux"
+            }
+        ]
+    },
+    {
+        "comment": "A.2.  Adding an Array Element",
+        "doc": {
+            "foo": [
+                "bar",
+                "baz"
+            ]
+        },
+        "expected": {
+            "foo": [
+                "bar",
+                "qux",
+                "baz"
+            ]
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/foo/1",
+                "value": "qux"
+            }
+        ]
+    },
+    {
+        "comment": "A.10.  Adding a nested Member Object",
+        "doc": {
+            "foo": "bar"
+        },
+        "expected": {
+            "child": {
+                "grandchild": {}
+            },
+            "foo": "bar"
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/child",
+                "value": {
+                    "grandchild": {}
+                }
+            }
+        ]
+    },
+    {
+        "comment": "A.11.  Ignoring Unrecognized Elements",
+        "doc": {
+            "foo": "bar"
+        },
+        "expected": {
+            "baz": "qux",
+            "foo": "bar"
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/baz",
+                "value": "qux",
+                "xyz": 123
+            }
+        ]
+    },
+    {
+        "comment": "A.12.  Adding to a Non-existent Target",
+        "doc": {
+            "foo": "bar"
+        },
+        "error": "add to a non-existent target",
+        "patch": [
+            {
+                "op": "add",
+                "path": "/baz/bat",
+                "value": "qux"
+            }
+        ]
+    },
+    {
+        "comment": "A.13 Invalid JSON Patch Document",
+        "disabled": true,
+        "doc": {
+            "foo": "bar"
+        },
+        "error": "operation has two 'op' members",
+        "patch": [
+            {
+                "op": "remove",
+                "path": "/baz",
+                "value": "qux"
+            }
+        ]
+    },
+    {
+        "comment": "A.16. Adding an Array Value",
+        "doc": {
+            "foo": [
+                "bar"
+            ]
+        },
+        "expected": {
+            "foo": [
+                "bar",
+                [
+                    "abc",
+                    "def"
+                ]
+            ]
+        },
+        "patch": [
+            {
+                "op": "add",
+                "path": "/foo/-",
+                "value": [
+                    "abc",
+                    "def"
+                ]
+            }
+        ]
+    }
+]

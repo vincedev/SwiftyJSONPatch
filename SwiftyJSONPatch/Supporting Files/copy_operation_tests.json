@@ -1,0 +1,79 @@
+[
+    {
+        "comment": "null value should be valid obj property to be copied",
+        "doc": {
+            "foo": null
+        },
+        "expected": {
+            "bar": null,
+            "foo": null
+        },
+        "patch": [
+            {
+                "from": "/foo",
+                "op": "copy",
+                "path": "/bar"
+            }
+        ]
+    },
+    {
+        "doc": {
+            "bar": 1,
+            "baz": [
+                {
+                    "qux": "hello"
+                }
+            ]
+        },
+        "expected": {
+            "bar": 1,
+            "baz": [
+                {
+                    "qux": "hello"
+                }
+            ],
+            "boo": {
+                "qux": "hello"
+            }
+        },
+        "patch": [
+            {
+                "from": "/baz/0",
+                "op": "copy",
+                "path": "/boo"
+            }
+        ]
+    },
+    {
+        "comment": "test copy with bad number should fail",
+        "doc": {
+            "bar": 1,
+            "baz": [
+                1,
+                2,
+                3
+            ]
+        },
+        "error": "copy op shouldn't work with bad number",
+        "patch": [
+            {
+                "from": "/baz/1e0",
+                "op": "copy",
+                "path": "/boo"
+            }
+        ]
+    },
+    {
+        "comment": "missing from parameter to copy",
+        "doc": [
+            1
+        ],
+        "error": "missing 'from' parameter",
+        "patch": [
+            {
+                "op": "copy",
+                "path": "/-"
+            }
+        ]
+    }
+]
