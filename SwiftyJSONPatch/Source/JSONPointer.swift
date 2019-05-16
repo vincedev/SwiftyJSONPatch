@@ -101,7 +101,7 @@ indirect internal enum JSONPointer {
     }
 
     private static func split(string: String) -> (String, String?) {
-        guard let slashIndex = string.index(of: "/") else {
+        guard let slashIndex = string.firstIndex(of: "/") else {
             return (string, nil)
         }
         let element = String(string.prefix(upTo: slashIndex))
