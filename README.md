@@ -3,7 +3,7 @@ SwiftyJSONPatch
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-A Swift 4 implementation for IETF JSON-patch ([RFC 6902](http://tools.ietf.org/html/rfc6902)).  
+A Swift 5 implementation for IETF JSON-patch ([RFC 6902](http://tools.ietf.org/html/rfc6902)).  
 iOS 8+  
 macOS 10.9+
 

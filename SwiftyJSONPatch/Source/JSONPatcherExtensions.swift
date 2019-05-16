@@ -9,9 +9,9 @@ internal extension JSONPatcher {
     typealias JSONDictionary = [String: JSONValue]
     typealias TraversalHandler = (JSONValue?) throws -> TraversalAction
 
-    internal func traverse(_ value: JSONValue,
-                           to pointer: JSONPointer,
-                           completion: TraversalHandler) throws -> JSONValue {
+    func traverse(_ value: JSONValue,
+                  to pointer: JSONPointer,
+                  completion: TraversalHandler) throws -> JSONValue {
         guard !pointer.isDocument() else {
             switch try completion(value) {
             case let .add(newValue):
@@ -94,7 +94,7 @@ internal extension JSONPatcher {
 }
 
 internal extension JSONPatcher {
-    internal func patch(_ target: JSONValue, with operation: JSONPatchOperation) throws -> JSONValue {
+    func patch(_ target: JSONValue, with operation: JSONPatchOperation) throws -> JSONValue {
         switch operation {
         case let .add(value, path):
             return try add(value: value, at: path, in: target)
@@ -141,7 +141,7 @@ internal extension JSONPatcher {
         return try add(value: valueToCopy, at: path, in: target)
     }
 
-    internal func move(from: JSONPointer, to path: JSONPointer, in target: JSONValue) throws -> JSONValue {
+    func move(from: JSONPointer, to path: JSONPointer, in target: JSONValue) throws -> JSONValue {
         guard !path.hasPrefix(from) else {
             throw OperationError.illegalMove(from.jsonString, path.jsonString)
         }
@@ -154,7 +154,7 @@ internal extension JSONPatcher {
         return value
     }
 
-    internal func test(at path: JSONPointer, against value: JSONValue, in target: JSONValue) throws -> JSONValue {
+    func test(at path: JSONPointer, against value: JSONValue, in target: JSONValue) throws -> JSONValue {
         return try traverse(target, to: path) { found in
             guard let found = found else {
                 throw OperationError.memberNotFound("path")
